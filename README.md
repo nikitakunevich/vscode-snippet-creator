@@ -4,6 +4,10 @@ This extension helps to automate snippet creation. Select text you want to creat
 
 ## Release Notes
 
+### 0.0.2
+
+Update manifest
+
 ### 0.0.1
 
 Initial release
