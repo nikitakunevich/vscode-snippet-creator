@@ -2,17 +2,17 @@
   "name": "snippet-creator",
   "displayName": "snippet-creator",
   "description": "Create snippets from selection",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "nikitaKunevich",
   "engines": {
     "vscode": "^1.5.0"
   },
   "repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-spell-check.git"
+		"url": "https://github.com/nikitaKunevich/vscode-snippet-creator.git"
 	},
 	"categories": [
-		"Other"
+		"Snippets, Other"
 	],
   "activationEvents": [
     "onCommand:extension.createSnippet"
