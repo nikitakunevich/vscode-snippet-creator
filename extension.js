@@ -76,22 +76,13 @@ function stripJSONComments(str, opts) {
 };
 
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 function activate(context) {
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('start extension');
-
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
     var disposable = vscode.commands.registerCommand('extension.createSnippet', function () {
         var editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showWarningMessage("Cannot create snippet from empty string. Select some text first.");
-            return; // No open text editor
+            return;
         }
 
         var selection = editor.selection;
@@ -112,7 +103,6 @@ function activate(context) {
                 snippetObject.language = language;
                 return vscode.window.showInputBox({
                     prompt: "Enter snippet name"
-                    //,placeHolder: 
                 })
             }).then((name) => {
                 if (name === undefined) {
@@ -136,6 +126,7 @@ function activate(context) {
             }).then(() => {
                 var vsCodeUserSettingsPath;
                 const osName = os.type();
+                var delimiter = "/";
                 switch (osName) {
                     case ("Darwin"): {
                         vsCodeUserSettingsPath = process.env.HOME + "/Library/Application Support/Code/User/";
@@ -146,7 +137,8 @@ function activate(context) {
                         break;
                     }
                     case ("Windows_NT"): {
-                        vsCodeUserSettingsPath = process.env.PATH + "\\Code\\User\\";
+                        vsCodeUserSettingsPath = process.env.APPDATA + "\\Code\\User\\";
+                        delimiter = "\\";
                         break;
                     }
                     default: {
@@ -156,7 +148,7 @@ function activate(context) {
                     }
                 }
 
-                var userSnippetsFile = vsCodeUserSettingsPath + util.format("snippets/%s.json", snippetObject.language);
+                var userSnippetsFile = vsCodeUserSettingsPath + util.format("snippets%s.json", delimiter + snippetObject.language);
 
                 fs.readFile(userSnippetsFile, (err, text) => {
                     if (err) {
@@ -176,7 +168,6 @@ function activate(context) {
                                 }))
                             }
                         })
-                        //create file if not exists
                     }
                     else {
                         var snippets = jsonFromText(text.toString());
@@ -223,11 +214,9 @@ function jsonFromText(text) {
         out = out.substring(0, result.index) + fixed + text.substring(regexp.lastIndex);
     }
 
-    console.log(out);
     return JSON.parse(out);
 }
 
-// this method is called when your extension is deactivated
 function deactivate() {
 }
 exports.deactivate = deactivate;
