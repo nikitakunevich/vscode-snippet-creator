@@ -1,41 +1,43 @@
 {
-  "name": "snippet-creator",
-  "displayName": "snippet-creator",
-  "description": "Create snippets from selection",
-  "version": "0.0.2",
-  "publisher": "nikitaKunevich",
-  "engines": {
-    "vscode": "^1.5.0"
-  },
-  "repository": {
-		"type": "git",
-		"url": "https://github.com/nikitaKunevich/vscode-snippet-creator.git"
-	},
-	"categories": [
-		"Snippets", "Other"
-	],
-  "activationEvents": [
-    "onCommand:extension.createSnippet"
-  ],
-  "main": "./extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.createSnippet",
-        "title": "Create Snippet"
-      }
-    ]
-  },
-  "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0",
-    "mocha": "^2.3.3",
-    "eslint": "^3.6.0",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32"
-  }
+    "name": "snippet-creator",
+    "displayName": "snippet-creator",
+    "description": "Create snippets from selection",
+    "version": "0.0.4",
+    "publisher": "nikitaKunevich",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "icon": "icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nikitaKunevich/vscode-snippet-creator.git"
+    },
+    "categories": [
+        "Snippets",
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.createSnippet"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.createSnippet",
+                "title": "Create Snippet"
+            }
+        ]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "eslint": "^3.6.0",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
 }
