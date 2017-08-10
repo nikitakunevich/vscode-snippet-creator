@@ -127,23 +127,31 @@ function activate(context) {
                 var vsCodeUserSettingsPath;
                 const osName = os.type();
                 var delimiter = "/";
+                var appName = vscode.env.appName;
+                
+                if(appName === "Visual Studio Code - Insiders") {
+                    appExtensionPath = "Code - Insiders";
+                } else {
+                    appExtensionPath = "Code";
+                }
+
                 switch (osName) {
                     case ("Darwin"): {
-                        vsCodeUserSettingsPath = process.env.HOME + "/Library/Application Support/Code/User/";
+                        vsCodeUserSettingsPath = process.env.HOME + "/Library/Application Support/" + appExtensionPath + "/User/";
                         break;
                     }
                     case ("Linux"): {
-                        vsCodeUserSettingsPath = process.env.HOME + "/.config/Code/User/";
+                        vsCodeUserSettingsPath = process.env.HOME + "/.config/" + appExtensionPath + "/User/";
                         break;
                     }
                     case ("Windows_NT"): {
-                        vsCodeUserSettingsPath = process.env.APPDATA + "\\Code\\User\\";
+                        vsCodeUserSettingsPath = process.env.APPDATA + "\\" + appExtensionPath + "\\User\\";
                         delimiter = "\\";
                         break;
                     }
                     default: {
                         //BSD?
-                        vsCodeUserSettingsPath = process.env.HOME + "/.config/Code/User/";
+                        vsCodeUserSettingsPath = process.env.HOME + "/.config/" + appExtensionPath + "/User/";
                         break;
                     }
                 }
