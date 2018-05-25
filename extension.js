@@ -162,21 +162,14 @@ function activate(context) {
                 }
 
                 var snippets = {};
-                snippets[snippetObject.name] = {
-                  prefix: snippetObject.shortcut,
-                  body: buildBodyFromText(selectedText),
-                  description: snippetObject.description
-                };
 
-                var newText = JSON.stringify(snippets, null, "\t");
-                fs.writeFile(userSnippetsFilePath, newText, err => {
-                  vscode.window.showErrorMessage(
-                    "Could not write to file.",
-                    err,
-                    userSnippetsFilePath
-                  );
-                  return;
-                });
+                addSnippet(snippets, snippetObject, selectedText);
+                writeSnippetsToFile(
+                  snippets,
+                  userSnippetsFilePath,
+                  snippetObject
+                );
+                return;
               });
 
               vscode.window.showInformationMessage(
@@ -195,28 +188,8 @@ function activate(context) {
               return;
             }
 
-            snippets[snippetObject.name] = {
-              prefix: snippetObject.shortcut,
-              body: buildBodyFromText(selectedText),
-              description: snippetObject.description
-            };
-
-            var newText = JSON.stringify(snippets, null, "\t");
-            fs.writeFile(userSnippetsFilePath, newText, err => {
-              if (err) {
-                vscode.window.showErrorMessage(
-                  "Could not write to file.",
-                  err,
-                  userSnippetsFilePath
-                );
-                return;
-              }
-
-              vscode.window.showInformationMessage(
-                "Created a new snippet. You can use it now by typing: " +
-                  snippetObject.shortcut
-              );
-            });
+            addSnippet(snippets, snippetObject, selectedText);
+            writeSnippetsToFile(snippets, userSnippetsFilePath, snippetObject);
           });
         });
     }
@@ -225,6 +198,32 @@ function activate(context) {
   context.subscriptions.push(disposable);
 }
 exports.activate = activate;
+
+function addSnippet(snippets, snippetObject, selectedText) {
+  snippets[snippetObject.name] = {
+    prefix: snippetObject.shortcut,
+    body: buildBodyFromText(selectedText),
+    description: snippetObject.description
+  };
+}
+
+function writeSnippetsToFile(snippets, userSnippetsFilePath, snippetObject) {
+  var newText = JSON.stringify(snippets, null, "\t");
+  fs.writeFile(userSnippetsFilePath, newText, err => {
+    if (err) {
+      vscode.window.showErrorMessage(
+        "Could not write to file.",
+        err,
+        userSnippetsFilePath
+      );
+      return;
+    }
+    vscode.window.showInformationMessage(
+      "Created a new snippet. You can use it now by typing: " +
+        snippetObject.shortcut
+    );
+  });
+}
 
 function getVsCodeUserSettingsPath() {
   switch (os.type()) {
