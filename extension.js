@@ -84,12 +84,10 @@ function stripJSONComments(str, opts) {
 function activate(context) {
   var disposable = vscode.commands.registerCommand(
     "extension.createSnippet",
-    function() {
+    () => {
       var editor = vscode.window.activeTextEditor;
       if (!editor) {
-        vscode.window.showWarningMessage(
-          "Cannot create snippet from empty string. Select some text first."
-        );
+        vscode.window.showWarningMessage("There is no text editor.");
         return;
       }
 
@@ -100,6 +98,7 @@ function activate(context) {
         );
         return;
       }
+
       var selectedText = editor.document.getText(selection);
 
       let snippetObject = {};
@@ -112,6 +111,7 @@ function activate(context) {
         })
         .then(language => {
           snippetObject.language = language;
+
           return vscode.window.showInputBox({
             prompt: "Enter snippet name"
           });
@@ -121,26 +121,32 @@ function activate(context) {
             return;
           }
           snippetObject.name = name;
+
           return vscode.window.showInputBox({
             prompt: "Enter snippet shortcut"
           });
         })
         .then(shortcut => {
-          if (shortcut === undefined) return;
+          if (shortcut === undefined) {
+            return;
+          }
           snippetObject.shortcut = shortcut;
+
           return vscode.window.showInputBox({
             prompt: "Enter snippet description"
           });
         })
         .then(description => {
-          if (description === undefined) return;
+          if (description === undefined) {
+            return;
+          }
           snippetObject.description = description;
         })
         .then(() => {
           var vsCodeUserSettingsPath;
-          const osName = os.type();
           var delimiter = "/";
-          switch (osName) {
+
+          switch (os.type()) {
             case "Darwin": {
               vsCodeUserSettingsPath =
                 process.env.HOME + "/Library/Application Support/Code/User/";
@@ -168,37 +174,65 @@ function activate(context) {
 
           fs.readFile(userSnippetsFile, (err, text) => {
             if (err) {
-              fs.open(userSnippetsFile, "w+", (err, fd) => {
-                if (err) return;
-                else {
-                  var snippets = {};
-                  snippets[snippetObject.name] = {
-                    prefix: snippetObject.shortcut,
-                    body: buildBodyFromText(selectedText),
-                    description: snippetObject.description
-                  };
-                  var newText = JSON.stringify(snippets, null, "\t");
-                  fs.writeFile(userSnippetsFile, newText, err => {});
+              fs.open(userSnippetsFile, "w+", (err, _) => {
+                if (err) {
+                  vscode.window.showErrorMessage(
+                    "Could not open file for writing.",
+                    err,
+                    userSnippetsFile
+                  );
+                  return;
                 }
-              });
-            } else {
-              var snippets = jsonFromText(text.toString());
 
-              if (snippets[snippetObject.name] !== undefined) {
-                vscode.window.showErrorMessage(
-                  "Snippet with this name already exists"
-                );
-                return;
-              } else {
+                var snippets = {};
                 snippets[snippetObject.name] = {
                   prefix: snippetObject.shortcut,
                   body: buildBodyFromText(selectedText),
                   description: snippetObject.description
                 };
+
                 var newText = JSON.stringify(snippets, null, "\t");
-                fs.writeFile(userSnippetsFile, newText, err => {});
-              }
+                fs.writeFile(userSnippetsFile, newText, err => {
+                  vscode.window.showErrorMessage(
+                    "Could not write to file.",
+                    err,
+                    userSnippetsFile
+                  );
+                  return;
+                });
+              });
+
+              vscode.window.showInformationMessage(
+                "Created new snippet with shortcut: " + snippetObject.shortcut
+              );
+              return;
             }
+
+            var snippets = jsonFromText(text.toString());
+
+            if (snippets[snippetObject.name] !== undefined) {
+              vscode.window.showErrorMessage(
+                "Snippet with this name already exists.",
+                snippetObject.name
+              );
+              return;
+            }
+
+            snippets[snippetObject.name] = {
+              prefix: snippetObject.shortcut,
+              body: buildBodyFromText(selectedText),
+              description: snippetObject.description
+            };
+
+            var newText = JSON.stringify(snippets, null, "\t");
+            fs.writeFile(userSnippetsFile, newText, err => {
+              vscode.window.showErrorMessage(
+                "Could not write to file.",
+                err,
+                userSnippetsFile
+              );
+              return;
+            });
           });
         });
     }
