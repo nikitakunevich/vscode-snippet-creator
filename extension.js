@@ -1,8 +1,8 @@
-var vscode = require("vscode");
-var process = require("process");
-var fs = require("fs");
-var util = require("util");
-var os = require("os");
+const vscode = require("vscode");
+const process = require("process");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 var singleComment = 1;
 var multiComment = 2;
@@ -144,7 +144,6 @@ function activate(context) {
         })
         .then(() => {
           var vsCodeUserSettingsPath;
-          var delimiter = "/";
 
           switch (os.type()) {
             case "Darwin": {
@@ -158,7 +157,6 @@ function activate(context) {
             }
             case "Windows_NT": {
               vsCodeUserSettingsPath = process.env.APPDATA + "\\Code\\User\\";
-              delimiter = "\\";
               break;
             }
             default: {
@@ -168,18 +166,20 @@ function activate(context) {
             }
           }
 
-          var userSnippetsFile =
-            vsCodeUserSettingsPath +
-            util.format("snippets%s.json", delimiter + snippetObject.language);
+          const userSnippetsFilePath = path.join(
+            vsCodeUserSettingsPath,
+            "snippets",
+            snippetObject.language + ".json"
+          );
 
-          fs.readFile(userSnippetsFile, (err, text) => {
+          fs.readFile(userSnippetsFilePath, (err, text) => {
             if (err) {
-              fs.open(userSnippetsFile, "w+", (err, _) => {
+              fs.open(userSnippetsFilePath, "w+", (err, _) => {
                 if (err) {
                   vscode.window.showErrorMessage(
                     "Could not open file for writing.",
                     err,
-                    userSnippetsFile
+                    userSnippetsFilePath
                   );
                   return;
                 }
@@ -192,11 +192,11 @@ function activate(context) {
                 };
 
                 var newText = JSON.stringify(snippets, null, "\t");
-                fs.writeFile(userSnippetsFile, newText, err => {
+                fs.writeFile(userSnippetsFilePath, newText, err => {
                   vscode.window.showErrorMessage(
                     "Could not write to file.",
                     err,
-                    userSnippetsFile
+                    userSnippetsFilePath
                   );
                   return;
                 });
@@ -225,13 +225,20 @@ function activate(context) {
             };
 
             var newText = JSON.stringify(snippets, null, "\t");
-            fs.writeFile(userSnippetsFile, newText, err => {
-              vscode.window.showErrorMessage(
-                "Could not write to file.",
-                err,
-                userSnippetsFile
+            fs.writeFile(userSnippetsFilePath, newText, err => {
+              if (err) {
+                vscode.window.showErrorMessage(
+                  "Could not write to file.",
+                  err,
+                  userSnippetsFilePath
+                );
+                return;
+              }
+
+              vscode.window.showInformationMessage(
+                "Created a new snippet. You can use it now by typing: " +
+                  snippetObject.shortcut
               );
-              return;
             });
           });
         });
