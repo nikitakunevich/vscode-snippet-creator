@@ -118,7 +118,7 @@ function activate(context) {
         })
         .then(name => {
           if (name === undefined) {
-            return;
+            return Promise.reject("Name was undefined");
           }
           snippetObject.name = name;
 
@@ -128,7 +128,7 @@ function activate(context) {
         })
         .then(shortcut => {
           if (shortcut === undefined) {
-            return;
+            return Promise.reject("Shortcut was undefined");
           }
           snippetObject.shortcut = shortcut;
 
@@ -138,9 +138,11 @@ function activate(context) {
         })
         .then(description => {
           if (description === undefined) {
-            return;
+            return Promise.reject("Description was undefined");
           }
           snippetObject.description = description;
+
+          return Promise.resolve();
         })
         .then(() => {
           const userSnippetsFilePath = path.join(
