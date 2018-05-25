@@ -143,31 +143,8 @@ function activate(context) {
           snippetObject.description = description;
         })
         .then(() => {
-          var vsCodeUserSettingsPath;
-
-          switch (os.type()) {
-            case "Darwin": {
-              vsCodeUserSettingsPath =
-                process.env.HOME + "/Library/Application Support/Code/User/";
-              break;
-            }
-            case "Linux": {
-              vsCodeUserSettingsPath = process.env.HOME + "/.config/Code/User/";
-              break;
-            }
-            case "Windows_NT": {
-              vsCodeUserSettingsPath = process.env.APPDATA + "\\Code\\User\\";
-              break;
-            }
-            default: {
-              //BSD?
-              vsCodeUserSettingsPath = process.env.HOME + "/.config/Code/User/";
-              break;
-            }
-          }
-
           const userSnippetsFilePath = path.join(
-            vsCodeUserSettingsPath,
+            getVsCodeUserSettingsPath(),
             "snippets",
             snippetObject.language + ".json"
           );
@@ -248,6 +225,24 @@ function activate(context) {
   context.subscriptions.push(disposable);
 }
 exports.activate = activate;
+
+function getVsCodeUserSettingsPath() {
+  switch (os.type()) {
+    case "Darwin": {
+      return process.env.HOME + "/Library/Application Support/Code/User/";
+    }
+    case "Linux": {
+      return process.env.HOME + "/.config/Code/User/";
+    }
+    case "Windows_NT": {
+      return process.env.APPDATA + "\\Code\\User\\";
+    }
+    default: {
+      //BSD?
+      return process.env.HOME + "/.config/Code/User/";
+    }
+  }
+}
 
 function buildBodyFromText(text) {
   var fixed = text.replace(/\t/g, "\\t");
