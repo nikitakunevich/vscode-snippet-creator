@@ -170,8 +170,9 @@ function getVsCodeUserSettingsPath() {
 }
 
 function buildBodyFromText(text) {
-  text += "\n$0";
-  return text.split("\n");
+  let fixed = text.replace(/\$/g, "\\$");
+  fixed += "\n$0";
+  return fixed.split("\n");
 }
 
 function deactivate() {}
