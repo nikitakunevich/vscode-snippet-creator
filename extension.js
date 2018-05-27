@@ -180,7 +180,7 @@ function activate(context) {
               return;
             }
 
-            var snippets = jsonFromText(text.toString());
+            var snippets = JSON.parse(text.toString());
 
             if (snippets[snippetObject.name] !== undefined) {
               vscode.window.showErrorMessage(
@@ -246,24 +246,8 @@ function getVsCodeUserSettingsPath() {
 }
 
 function buildBodyFromText(text) {
-  var fixed = text.replace(/\t/g, "\\t");
-  return fixed.split("\n");
-}
-
-function jsonFromText(text) {
-  var regexp = /"(\\.|[^"\\])*"/gi;
-  var result;
-
-  text = stripJSONComments(text, { whitespace: false });
-  var out = text;
-  while ((result = regexp.exec(text))) {
-    var substr = text.slice(result.index, regexp.lastIndex);
-    var fixed = substr.replace(/\t/g, "\\t");
-    out =
-      out.substring(0, result.index) + fixed + text.substring(regexp.lastIndex);
-  }
-
-  return JSON.parse(out);
+  text += "\n$0";
+  return text.split("\n");
 }
 
 function deactivate() {}
