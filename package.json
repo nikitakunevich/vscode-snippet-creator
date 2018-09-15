@@ -1,8 +1,8 @@
 {
     "name": "snippet-creator",
     "displayName": "snippet-creator",
-    "description": "Create snippets from selection",
-    "version": "0.0.4",
+    "description": "(deprecated, looking for a maintainer) Create snippets from selection",
+    "version": "0.0.5",
     "publisher": "nikitaKunevich",
     "engines": {
         "vscode": "^1.5.0"
