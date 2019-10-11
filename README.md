@@ -5,7 +5,7 @@ Looking for a new maintainer.)
 
 This extension helps to automate snippet creation. Select text you want to create snippet from and use command "Create snippet" from command palette.
 
-You can edit created snippet as usual.
+You can edit created snippets as usual because snippets created by this extension simply get added to the snippet JSON file for the relevant language. Use the command Preferences: Configure User Snippets (a built-in vscode command) to select and edit your snippets file.
 
 ## Release Notes
 ### 0.0.5
